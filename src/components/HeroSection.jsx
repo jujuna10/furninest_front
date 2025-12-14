@@ -15,7 +15,7 @@ function HeroSection() {
   return (
     <div className="relative w-full h-200">
       <Image src="/hero3.webp" alt="Hero Section" fill quality={100} priority className="object-cover" />
-      <div className='absolute top-[22%] lg:top-[25%] left-[5%]'>
+      <div className='absolute top-[15%] lg:top-[25%] left-[5%]'>
         <p className={playfair.className + " text-[55px] font-semibold text-white"}>Transform Your Home <br /> into a Cozy Nest</p>
         <p className="text-[20px] text-gray-200 mt-8">Discover modern furniture and timeless designs that bring comfort, <br /> style, and warmth to every corner of your home.</p>
         <div className='flex gap-5 mt-8'>

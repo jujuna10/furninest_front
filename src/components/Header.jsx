@@ -34,8 +34,9 @@ function Header() {
             </div>
         </div>
         {/* Mobile menu */}
-        <div className={`lg:hidden justify-start items-center w-[45%] h-screen z-45 ${isMenuOpen ? 'translate-x-0 translate-y-0' : 'translate-x-[150%] -translate-y-[150%]'} transition-transform duration-300 ease-in-out fixed top-0 right-0 bg-gray-300 p-6`}>
-            <div className='flex flex-col gap-7 mt-[20%] justify-start'>
+        <div className={`lg:hidden justify-start items-center w-[55%] h-screen z-45 ${isMenuOpen ? 'translate-x-[100%] translate-y-[-10%]' : 'translate-x-[150%] -translate-y-[150%]'} transition-transform duration-300 ease-in-out fixed top-0 right-0 bg-gray-300 p-6`}>
+
+            <div className='flex flex-col gap-7 mt-[45%] justify-start'>
                 <a className={`text-[18px] ${current === "home" ? "text-blue-500" : "text-gray-700"}`} href="#">Home</a>
                 <a className={`text-[18px] ${current === "collection" ? "text-blue-500" : "text-gray-700"}`} href="#">Collection</a>
                 <a className={`text-[18px] ${current === "lookbook" ? "text-blue-500" : "text-gray-700"}`} href="#">Look Book</a>

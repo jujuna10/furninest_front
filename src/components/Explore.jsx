@@ -1,6 +1,6 @@
 'use client'
 import Image from 'next/image';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Playfair_Display } from 'next/font/google'
 
 const playfair = Playfair_Display({
@@ -43,6 +43,7 @@ function Explore() {
         { name: "dinning table", image: "/diningtable.jpeg" },
     ]
 
+
     return (
         <div className='2xl:w-[90%] w-full flex flex-col mt-12 overflow-x-hidden'>
             {/* text and buttons */}
@@ -60,7 +61,7 @@ function Explore() {
             {/* cards */}
             <div className='flex flex-col justify-center items-start w-full'>
                 {activeButton === 'Living Room' && (
-                    <div className='grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-3 2xl:grid-cols-4 gap-y-12 gap-x-12 lg:gap-x-5 xl:w-[100%] 2xl:w-full mt-22 pl-2 pr-12 md:px-5 2xl:px-20'>
+                    <div className='grid xl:grid-cols-4 sm:grid-cols-3 grid-cols-3 2xl:grid-cols-4 gap-y-12 gap-x-12 lg:gap-x-5 xl:w-full 2xl:w-full mt-22 pl-2 pr-12 md:px-5 2xl:px-20'>
                         {livingRoom.map((item) => (
                             <div key={item.name} className='w-[320px]'>
                                 <Image src={item.image} alt={item.name} width={350} height={350} className='rounded-[10px] 2xl:w-[350px] 2xl:h-[350px] lg:w-[300px] lg:h-[300px] md:w-[250px] md:h-[250px] sm:w-[180px] sm:h-[180px] w-[120px] h-[120px]' />
@@ -89,7 +90,7 @@ function Explore() {
                         ))}
                     </div>
                 )}
-                <div className='flex gap-2 mt-5 mb-12 px-22 w-[82%]'>
+                <div className='flex gap-2 mt-5 mb-12 px-22 w-[100%]'>
                     <hr className={`w-[33.3%] border-0 border-t-4 ${activeButton === 'Living Room' ? 'border-[rgb(144,144,144)] rounded-l-[100px]' : 'border-gray-300'}`} />
                     <hr className={`w-[33.3%] border-0 border-t-4 ${activeButton === 'Bedroom' ? 'border-[rgb(144,144,144)]' : 'border-gray-300'}`} />
                     <hr className={`w-[33.3%] border-0 border-t-4 ${activeButton === 'Dining Room' ? 'border-[rgb(144,144,144)] rounded-r-[100px]' : 'border-gray-300'}`} />

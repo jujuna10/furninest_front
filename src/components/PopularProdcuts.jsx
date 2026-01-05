@@ -11,17 +11,20 @@ const playfair = Playfair_Display({
 })
 
 function PopularProdcuts() {
-
+// src/components/PopularProdcuts.jsx
     const [products, setProducts] = useState([]);
     const [paginationPage,setPaginationPage] = useState(1);
 
     useEffect(() => {
-        fetch("http://localhost:999/furninest/index.php")
-            .then(res => res.json())
-            .then(data => {
-                setProducts(data);
-            });
-    }, []);
+    fetch("http://localhost:999/furninest/public/popular-products")
+        .then(res => res.json())
+        .then(response => {
+            if (response.success) {
+                setProducts(response.data);
+            }
+        })
+        .catch(error => console.error("Error:", error));
+}, []);
 
     console.log(products);
 
@@ -45,8 +48,8 @@ function PopularProdcuts() {
             {/* products */}
 
             <div className='flex items-center gap-12 mt-12 2xl:w-[90%] justify-between'>
-                <div className='border rounded-[50%] border-gray-300 h-[55px] w-[55px] p-2 hover:cursor-pointer hover:bg-[rgb(43,139,136)] duration-300'>
-                    <Image src='/arrow.png' alt='back arrow' width={35} height={35} className='rounded-[10px] rotate-90  hover:invert-100'  onClick={() => {setPaginationPage(prev => (prev === 1 ? 3 : prev - 1));}}/>
+                <div className='border rounded-[50%] border-gray-300 h-[55px] w-[55px] p-2 hover:cursor-pointer  hover:bg-[rgb(43,139,136)] duration-300' onClick={() => {setPaginationPage(prev => (prev === 1 ? 3 : prev - 1));}}>
+                    <Image src='/arrow.png' alt='back arrow' width={35} height={35} className='rounded-[10px] rotate-90' />
                 </div>
                 <div className='flex gap-12'>
                     <div></div>
@@ -61,11 +64,11 @@ function PopularProdcuts() {
                         </div>
                     ))}
                 </div>
-                <div className='border rounded-[50%] border-gray-300 h-[55px] w-[55px] p-2 hover:cursor-pointer hover:bg-[rgb(43,139,136)] duration-300'>
-                    <Image src='/arrow.png' alt='back arrow' width={35} height={35} className='rounded-[10px] rotate-270  hover:invert-100' onClick={() => {setPaginationPage(prev => (prev === 3 ? 1 : prev + 1))}} />
+                <div className='border rounded-[50%] border-gray-300 h-[55px] w-[55px] p-2 hover:cursor-pointer hover:invert-100 hover:bg-[rgb(43,139,136)] duration-300' onClick={() => {setPaginationPage(prev => (prev === 3 ? 1 : prev + 1))}}>
+                    <Image src='/arrow.png' alt='back arrow' width={35} height={35} className='rounded-[10px] rotate-270 ' />
                 </div>
             </div>
-            <div className='flex gap-2 mt-5 mb-12 px-22 w-full mt-12'>
+            <div className='flex gap-2 mt-5 mb-12 px-22 w-full'>
                 <hr className={`w-[33.3%] border-0 border-t-4  rounded-l-[100px] ${paginationPage === 1 ? 'border-[rgb(43,139,136)]' : 'border-gray-300'}`} />
                 <hr className={`w-[33.3%] border-0 border-t-4  ${paginationPage === 2 ? 'border-[rgb(43,139,136)]' : 'border-gray-300'}`} />
                 <hr className={`w-[33.3%] border-0 border-t-4  rounded-r-[100px] ${paginationPage === 3 ? 'border-[rgb(43,139,136)]' : 'border-gray-300'}`} />

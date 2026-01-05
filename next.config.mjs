@@ -2,6 +2,16 @@
 const nextConfig = {
   /* config options here */
   reactCompiler: true,
+   images: {
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '999',
+        pathname: '/furninest/images/**',
+      },
+    ],
+  },
 };
 
 export default nextConfig;

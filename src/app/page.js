@@ -5,6 +5,7 @@ import PopularProdcuts from "@/components/PopularProdcuts";
 import RoomsSetup from "@/components/RoomsSetup";
 import Info from "@/components/Info";
 import Clients from "@/components/Clients";
+import Offer from "@/components/Offer";
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
       <RoomsSetup />
       <Info />
       <Clients />
+      <Offer />
     </div>
   );
 }

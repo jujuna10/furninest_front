@@ -45,7 +45,7 @@ function Explore() {
 
 
     return (
-        <div className='2xl:w-[90%] w-full flex flex-col mt-12 overflow-x-hidden'>
+        <div className='2xl:w-[90%] w-full flex flex-col overflow-x-hidden'>
             {/* text and buttons */}
             <div className='flex justify-between items-center w-full px-5 2xl:px-20'>
                 <div className='flex flex-col'>
@@ -90,7 +90,7 @@ function Explore() {
                         ))}
                     </div>
                 )}
-                <div className='flex gap-2 mt-5 mb-12 px-22 w-[100%]'>
+                <div className='flex gap-2 mt-5 mb-12 px-22 w-full'>
                     <hr className={`w-[33.3%] border-0 border-t-4 ${activeButton === 'Living Room' ? 'border-[rgb(144,144,144)] rounded-l-[100px]' : 'border-gray-300'}`} />
                     <hr className={`w-[33.3%] border-0 border-t-4 ${activeButton === 'Bedroom' ? 'border-[rgb(144,144,144)]' : 'border-gray-300'}`} />
                     <hr className={`w-[33.3%] border-0 border-t-4 ${activeButton === 'Dining Room' ? 'border-[rgb(144,144,144)] rounded-r-[100px]' : 'border-gray-300'}`} />

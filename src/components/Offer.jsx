@@ -11,7 +11,7 @@ const playfair = Playfair_Display({
 
 function Offer() {
   return (
-    <div className='2xl:w-[90%] w-full flex flex-col justify-center items-center mt-12 overflow-x-hidden px-5 2xl:px-20'>
+    <div id='offers' className='2xl:w-[90%] w-full flex flex-col justify-center items-center overflow-x-hidden px-5 2xl:px-20'>
         <div className='flex justify-between items-center w-full mb-12'>
             <div className='flex flex-col'>
                 <p className={playfair.className + ' text-[25px] md:text-[25px] lg:text-[30px] xl:text-[38px] 2xl:text-[45px] font-bold mb-2'}>Special Ofers & Discounts</p>

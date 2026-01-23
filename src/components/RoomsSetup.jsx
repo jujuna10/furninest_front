@@ -33,7 +33,7 @@ function RoomsSetup() {
     ]
 
   return (
-     <div className='2xl:w-[90%] w-full flex flex-col justify-center items-center mt-12 overflow-x-hidden'>
+     <div id='lookbook' className='2xl:w-[90%] w-full flex flex-col justify-center items-center overflow-x-hidden'>
         {/* text and buttons */}
         <div className='flex flex-col justify-start items-start w-full px-5 2xl:px-20'>
             <div className='flex justify-between items-center w-full'>

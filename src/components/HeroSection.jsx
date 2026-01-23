@@ -13,7 +13,7 @@ const heroImages = [{url:'/nightstand.webp', name:'Nightstand'}, {url:'/loungech
 
 function HeroSection() {
   return (
-    <div className="relative w-full h-200">
+    <div id='home' className="relative w-full h-200">
       <Image src="/hero3.webp" alt="Hero Section" fill quality={100} priority className="object-cover" />
       <div className='absolute top-[15%] lg:top-[25%] left-[5%]'>
         <p className={playfair.className + " text-[55px] font-semibold text-white"}>Transform Your Home <br /> into a Cozy Nest</p>

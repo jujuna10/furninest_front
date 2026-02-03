@@ -17,6 +17,8 @@ function page() {
   const [searchQuery, setSearchQuery] = useState('');
   const [products, setProducts] = useState([]);
   const [addedProducts, setAddedProducts] = useState([])
+  const [cartLoaded, setCartLoaded] = useState(false);
+  const [usernameLoaded, setUsernameLoaded] = useState(false);
   const route = useRouter();
   const { user, logout, loading } = useAuth();
   const [userName,setUserName] = useState(null)
@@ -50,16 +52,13 @@ function page() {
 
       const response = await fetch(`http://localhost:999/furninest/public/productsList?${params.toString()}`);
 
-      // ჯერ შეამოწმე response status
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      // შემდეგ response text-ად წაიკითხე რომ დაინახო რას აბრუნებს
       const text = await response.text();
       console.log('Raw response:', text);
 
-      // შემდეგ parse JSON
       const data = JSON.parse(text);
       console.log('Parsed data:', data);
 
@@ -81,7 +80,7 @@ function page() {
       applyFilters();
     }, 400);
 
-    return () => clearTimeout(timeout);
+    return () => clearTimeout(timeout);          
   }, [searchQuery])
 
   useEffect(() => {
@@ -89,6 +88,10 @@ function page() {
       route.push('/login');
     }
   }, [user, loading, route]);
+
+   if (!user) {
+      console.log('userinfo',user)
+    }
 
 
 
@@ -126,7 +129,7 @@ function page() {
         }
 
         const data = await response.json();
-        console.log('User:', data);
+        console.log('User:profile', data);
         setUserName(data.user.name)
         setUserNameContext(data.user.name,data.user.lastname)
 
@@ -135,9 +138,30 @@ function page() {
       }
     };
 
+    const storedCart = localStorage.getItem('cart');
+    if (storedCart) {
+      setAddedProducts(JSON.parse(storedCart));
+    }
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUserName(JSON.parse(storedUsername));
+    }
+    setCartLoaded(true);
+    setUsernameLoaded(true);
+
     fetchInitialProducts();
     fetchUser();
   }, []);
+
+  useEffect(() => {
+    if (!cartLoaded) return;
+    localStorage.setItem('cart', JSON.stringify(addedProducts));
+  }, [addedProducts, cartLoaded]);
+
+  useEffect(() => {
+    if (!usernameLoaded) return;
+    localStorage.setItem('username', JSON.stringify(userName));
+  }, [userName, usernameLoaded]);
 
 
   const checkout = () => {
@@ -236,76 +260,79 @@ function page() {
   return (
       
       <div className='w-full flex flex-col gap-20 p-12'>
-        <div className='flex justify-end items-center gap-12'>
-          <div className="w-[25%] flex items-center gap-5 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(43,139,136)] focus:border-transparent">
-            <Image src="/search.png" alt="Search" width={20} height={20} className='text-[20px]' onClick={() => applyFilters()} />
-            <input type="text" placeholder="Search" className='focus:outline-none focus:border-transparent' onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} />
-          </div>
-          <div>
-            <div className=' relative flex gap-12'>
-              <div className='flex py-2 relative px-5 justify-center items-center gap-5 bg-[rgb(43,139,136)] rounded-lg cursor-pointer' onClick={() => setShowCart(!showCart)}>
-                <Image src="/shopping-cart.png" alt="Filter" width={35} height={35} className='invert-100' />
-                <p className='text-white text-[20px]'>Cart</p>
-                {addedProducts.length > 0 && (
-                  <p className='absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-red-500 text-white text-[12px] px-2 py-1 rounded-full'>{addedProducts.reduce((total, product) => total + product.boughtProduct, 0)}</p>
-                )}
-              </div>
-              <div className='w-14 h-14 rounded-[50%] cursor-pointer bg-linear-to-b from-[rgb(171,120,233)] to-[rgb(255,105,150)] flex items-center justify-center'>
-                <p className='text-white text-[20px] font-bold'>{userName}</p>
-              </div>
-              <div>
-              </div>
-              {addedProducts.length > 0 && showCart && (
-                <div className='absolute top-[110%] bg-[rgb(250,248,248)] shadow-lg w-[400px] rounded-[5px] -left-[50%] mt-12'>
-                  <div className=' w-full px-5 py-4'>
-                    <div className='flex justify-between items-center w-full'>
-                      <p className='text-[22px]'>Shopping cart</p>
-                      <Image src="/delete.png" alt="Close" width={25} height={25} className='text-[20px] cursor-pointer' onClick={() => setAddedProducts([])}/>
-                    </div>
-                    <hr className='w-full h-[2px] text-gray-300 mt-5' />
-                  </div>
-                  {addedProducts.length > 0 && addedProducts.map((product) => (
-                    <div key={product.id} className=" px-5 py-5">
-                      <div className='flex gap-5'>
-                        <Image src={product.image_url} alt={product.name} width={70} height={70} unoptimized className="w-24 h-24 rounded-[10px] object-cover" />
-                        <div className='flex gap-2 w-full justify-between'>
-                          <div className='flex flex-col gap-4'>
-                            <p className='flex gap-2 text-[19px] text-blue-950'>{product.boughtProduct}x<span>{product.name}</span></p>
-                            <p className='text-[22px] font-medium text-[rgb(60,131,113)]'>${product.price * product.boughtProduct}</p>
-                          </div>
-                          <div className='flex gap-0'>
-                            <div className='w-[45px] h-[45px] cursor-pointer bg-gray-100 border border-gray-300 flex items-center justify-center rounded-l-[5px]'  onClick={() => productsQuantityChange(product.id, 'minus')}>
-                              <p className='text-[22px]'>-</p>
-                            </div>
-                            <div className='w-[45px] h-[45px] bg-gray-100 border border-gray-300 flex items-center justify-center'>
-                              <p className='text-[22px]'>{product.boughtProduct}</p>
-                            </div>
-                            <div className='w-[45px] h-[45px] cursor-pointer bg-gray-100 border border-gray-300 flex items-center justify-center rounded-r-[5px]' onClick={() => productsQuantityChange(product.id, 'add')}>
-                              <p className='text-[22px]'>+</p>
-                            </div>
-                          </div>
-                        </div>
+        <div className='flex justify-between w-full items-center'>
+          <Image src="/mainlogo.png" alt="Logo" width={100} height={100} className='w-[125px] h-[125px] object-contain' />
+          <div className='flex justify-end items-center gap-12'>
+            <div className="w-[50%] flex items-center gap-5 px-3 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[rgb(43,139,136)] focus:border-transparent">
+              <Image src="/search.png" alt="Search" width={20} height={20} className='text-[20px]' onClick={() => applyFilters()} />
+              <input type="text" placeholder="Search" className='focus:outline-none focus:border-transparent' onChange={(e) => setSearchQuery(e.target.value)} value={searchQuery} />
+            </div>
+            <div>
+              <div className='relative flex gap-12'>
+                <div className='flex py-2 relative px-5 justify-center items-center gap-5 bg-[rgb(43,139,136)] rounded-lg cursor-pointer' onClick={() => setShowCart(!showCart)}>
+                  <Image src="/shopping-cart.png" alt="Filter" width={35} height={35} className='invert-100' />
+                  <p className='text-white text-[20px]'>Cart</p>
+                  {addedProducts.length > 0 && (
+                    <p className='absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-red-500 text-white text-[12px] px-2 py-1 rounded-full'>{addedProducts.reduce((total, product) => total + product.boughtProduct, 0)}</p>
+                  )}
+                </div>
+                <div className='w-14 h-14 rounded-[50%] cursor-pointer bg-linear-to-b from-[rgb(171,120,233)] to-[rgb(255,105,150)] flex items-center justify-center' onClick={() => route.push('/settings')}>
+                  <p className='text-white text-[20px] font-bold'>{usernameLoaded && userName ? userName[0] : ''}</p>
+                </div>
+                <div>
+                </div>
+                {addedProducts.length > 0 && showCart && (
+                  <div className='absolute top-[110%] bg-[rgb(250,248,248)] shadow-lg w-[400px] rounded-[5px] -left-[50%] mt-12'>
+                    <div className=' w-full px-5 py-4'>
+                      <div className='flex justify-between items-center w-full'>
+                        <p className='text-[22px]'>Shopping cart</p>
+                        <Image src="/delete.png" alt="Close" width={25} height={25} className='text-[20px] cursor-pointer' onClick={() => localStorage.removeItem('cart')}/>
                       </div>
                       <hr className='w-full h-[2px] text-gray-300 mt-5' />
                     </div>
-                  ))}
-                  <div className='w-full flex flex-col justify-between px-5 py-3'>
-                    <div className='flex flex-col justify-end items-end'>
-                      <p className='text-gray-500 text-[18px]'>Subtotal: ${addedProducts.reduce((total, product) => total + product.price * product.boughtProduct, 0)}</p>
-                      <p className='text-gray-500 text-[18px]'>Shipping: $4.99</p>
-                      <p className='text-gray-500 text-[18px]'>Tax: $8.98</p>
+                    {addedProducts.length > 0 && addedProducts.map((product) => (
+                      <div key={product.id} className=" px-5 py-5">
+                        <div className='flex gap-5'>
+                          <Image src={product.image_url} alt={product.name} width={70} height={70} unoptimized className="w-24 h-24 rounded-[10px] object-cover" />
+                          <div className='flex gap-2 w-full justify-between'>
+                            <div className='flex flex-col gap-4'>
+                              <p className='flex gap-2 text-[19px] text-blue-950'>{product.boughtProduct}x<span>{product.name}</span></p>
+                              <p className='text-[22px] font-medium text-[rgb(60,131,113)]'>${product.price * product.boughtProduct}</p>
+                            </div>
+                            <div className='flex gap-0'>
+                              <div className='w-[45px] h-[45px] cursor-pointer bg-gray-100 border border-gray-300 flex items-center justify-center rounded-l-[5px]'  onClick={() => productsQuantityChange(product.id, 'minus')}>
+                                <p className='text-[22px]'>-</p>
+                              </div>
+                              <div className='w-[45px] h-[45px] bg-gray-100 border border-gray-300 flex items-center justify-center'>
+                                <p className='text-[22px]'>{product.boughtProduct}</p>
+                              </div>
+                              <div className='w-[45px] h-[45px] cursor-pointer bg-gray-100 border border-gray-300 flex items-center justify-center rounded-r-[5px]' onClick={() => productsQuantityChange(product.id, 'add')}>
+                                <p className='text-[22px]'>+</p>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <hr className='w-full h-[2px] text-gray-300 mt-5' />
+                      </div>
+                    ))}
+                    <div className='w-full flex flex-col justify-between px-5 py-3'>
+                      <div className='flex flex-col justify-end items-end'>
+                        <p className='text-gray-500 text-[18px]'>Subtotal: ${addedProducts.reduce((total, product) => total + product.price * product.boughtProduct, 0)}</p>
+                        <p className='text-gray-500 text-[18px]'>Shipping: $4.99</p>
+                        <p className='text-gray-500 text-[18px]'>Tax: $8.98</p>
+                      </div>
+                      <hr className='w-full h-[2px] text-gray-300 mt-5 mb-5' />
+                      <div className='flex justify-between items-center w-full'>
+                        <p className='text-[rgb(43,139,136)] text-[22px] font-medium'>Total</p>
+                        <p className='text-[22px] font-medium text-[rgb(60,131,113)]'>${addedProducts.reduce((total, product) => total + product.price * product.boughtProduct, 0)}</p>
+                      </div>
                     </div>
-                    <hr className='w-full h-[2px] text-gray-300 mt-5 mb-5' />
-                    <div className='flex justify-between items-center w-full'>
-                      <p className='text-[rgb(43,139,136)] text-[22px] font-medium'>Total</p>
-                      <p className='text-[22px] font-medium text-[rgb(60,131,113)]'>${addedProducts.reduce((total, product) => total + product.price * product.boughtProduct, 0)}</p>
+                    <div className='flex items-center justify-center'>
+                      <button className='w-[90%] bg-[rgb(43,139,136)] text-white text-[20px] font-medium py-2 px-3 mb-5 rounded-lg cursor-pointer' onClick={() => checkout()}>Checkout</button>
                     </div>
                   </div>
-                  <div className='flex items-center justify-center'>
-                    <button className='w-[90%] bg-[rgb(43,139,136)] text-white text-[20px] font-medium py-2 px-3 mb-5 rounded-lg cursor-pointer' onClick={() => checkout()}>Checkout</button>
-                  </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
         </div>

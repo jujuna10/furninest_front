@@ -1,6 +1,7 @@
 'use client'
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react'
+import { useAuth } from '../../context/AuthContext';
 
 function page() {
 
@@ -22,6 +23,8 @@ function page() {
         terms: ''
     });
     const route = useRouter()
+    const { login } = useAuth();
+
 
     const handleChange = (e) => {
         setFormData({
@@ -35,7 +38,7 @@ function page() {
         return emailRegex.test(email);
     };
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (!agreedToTerms) {
             setErrors({
@@ -57,25 +60,53 @@ function page() {
         }
         console.log('რეგისტრაცია:', formData);
         alert('რეგისტრაცია წარმატებულია!');
-        fetch("http://localhost:999/furninest/public/users", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                name: formData.firstName,
-                lastname: formData.lastName,
-                email: formData.email,
-                password: formData.password
-            })
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(err => {
+        // fetch("http://localhost:999/furninest/public/users", {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json"
+        //     },
+        //     body: JSON.stringify({
+        //         name: formData.firstName,
+        //         lastname: formData.lastName,
+        //         email: formData.email,
+        //         password: formData.password
+        //     })
+        // })
+        // .then(res => res.json())
+        // .then(data => {
+        //     console.log(data);
+        //     const loginResult = await login(formData.email, formData.password);
+
+        //     // route.push('/profile')
+        // })
+        // .catch(err => {
+        //     console.error(err);
+        // });
+        try {
+            const registerRes = await fetch("http://localhost:999/furninest/public/users", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    name: formData.firstName,
+                    lastname: formData.lastName,
+                    email: formData.email,
+                    password: formData.password
+                })
+            });
+
+            const registerData = await registerRes.json();
+            console.log('Registration:', registerData);
+
+            const loginResult = await login(formData.email, formData.password);
+            
+            if (!loginResult.success) {
+                setErrors({ general: 'Registration successful but login failed' });
+            }
+            
+        } catch (err) {
             console.error(err);
-        });
+            setErrors({ general: 'Registration failed' });
+        }
     };
 
     
